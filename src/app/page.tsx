@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { convertAIAnalysisToMarkdown, convertMarkdownToHTML } from '../utils/markdown';
+import { useState } from 'react';
 
 // 영상 데이터 타입 정의
 interface VideoData {
@@ -15,37 +14,9 @@ interface VideoData {
   transcript?: string;
 }
 
-// AI 분석 결과 타입 정의
+// AI 분석 결과 타입 정의 - 단순한 텍스트 형태
 interface AIAnalysis {
-  channel_overview?: {
-    summary?: string;
-    key_metrics?: {
-      avg_views?: number;
-      total_views?: number;
-      top_performing_video?: string;
-      content_consistency?: string;
-    };
-  };
-  keyword_insights?: {
-    trending_keywords?: string[];
-    analysis?: string;
-    recommended_keywords?: string[];
-  };
-  content_strategy?: {
-    recommended_topics?: string[];
-    content_formats?: string[];
-    strategy_analysis?: string;
-  };
-  engagement_patterns?: {
-    high_performance_characteristics?: string[];
-    analysis?: string;
-  };
-  growth_strategy?: {
-    short_term?: string[];
-    long_term?: string[];
-    analysis?: string;
-  };
-  [key: string]: unknown;
+  report_text?: string;
 }
 
 // 분석 결과 타입 정의
@@ -102,26 +73,13 @@ export default function Home() {
     { step: 4, title: "결과 정리 중", description: "분석 결과를 정리하고 있어요", icon: "📊" }
   ];
 
-  // AI 분석 마크다운 렌더링 컴포넌트
-  const AIAnalysisMarkdown = ({ aiAnalysis }: { aiAnalysis: AIAnalysis }) => {
-    const [htmlContent, setHtmlContent] = useState<string>('');
-    
-    useEffect(() => {
-      const convertToHTML = async () => {
-        const markdown = convertAIAnalysisToMarkdown(aiAnalysis);
-        const html = await convertMarkdownToHTML(markdown);
-        setHtmlContent(html);
-      };
-      
-      convertToHTML();
-    }, [aiAnalysis]);
-    
+  // 메모장 스타일의 단순한 텍스트 분석 결과 컴포넌트
+  const SimpleAnalysisReport = ({ reportText }: { reportText: string }) => {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <div 
-          className="prose prose-slate max-w-none prose-headings:text-gray-900 prose-h1:text-2xl prose-h1:font-bold prose-h1:mb-4 prose-h2:text-xl prose-h2:font-semibold prose-h2:mb-3 prose-h2:text-blue-900 prose-h3:text-lg prose-h3:font-medium prose-h3:mb-2 prose-h3:text-blue-800 prose-p:text-gray-700 prose-p:leading-relaxed prose-li:text-gray-700 prose-strong:text-gray-900 prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-blue-600"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
-        />
+      <div className="bg-white border border-gray-300 rounded p-4">
+        <pre className="whitespace-pre-wrap font-mono text-sm leading-normal text-black bg-white">
+          {reportText}
+        </pre>
       </div>
     );
   };
@@ -240,161 +198,37 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 분석 결과 모달 */}
+      {/* 분석 결과 모달 - 메모장 스타일 */}
       {show_result_modal && analysis_result && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            {/* 모달 헤더 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">🎉 분석 완료!</h2>
-              <button
-                onClick={close_modal}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
-              >
-                ✕
-              </button>
+          <div className="bg-white rounded max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-lg border border-gray-400">
+            {/* 모달 헤더 - 단순 스타일 */}
+            <div className="bg-gray-100 border-b border-gray-300 px-4 py-3">
+              <div className="flex justify-between items-center">
+                <h1 className="text-lg font-bold text-black">AI 분석 결과</h1>
+                <button
+                  onClick={close_modal}
+                  className="text-gray-600 hover:text-black text-lg px-2"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
-            {/* 모달 내용 */}
-            <div className="p-6">
-              {/* 기본 통계 */}
-              <div className="grid md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-blue-600">{analysis_result.videos.length}</div>
-                  <div className="text-sm text-blue-800">총 영상 수</div>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {analysis_result.videos.filter((video: VideoData) => video.transcript).length}
-                  </div>
-                  <div className="text-sm text-green-800">자막 있는 영상</div>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {Math.round((analysis_result.videos.filter((video: VideoData) => video.transcript).length / analysis_result.videos.length) * 100)}%
-                  </div>
-                  <div className="text-sm text-purple-800">자막 커버리지</div>
-                </div>
-                <div className="bg-yellow-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {analysis_result.analysis_summary?.total_views?.toLocaleString() || '정보없음'}
-                  </div>
-                  <div className="text-sm text-yellow-800">총 조회수</div>
-                </div>
-              </div>
-
-              {/* AI 분석 결과 (마크다운 형식) */}
-              {analysis_result.ai_analysis && (
-                <div className="mb-8">
-                  <AIAnalysisMarkdown aiAnalysis={analysis_result.ai_analysis} />
-                </div>
-              )}
-
-
-              {/* 영상 목록 - 전체 표시 */}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">📝 분석된 영상 목록 ({analysis_result.videos.length}개)</h3>
-                <div className="space-y-4">
-                  {analysis_result.videos.map((video: VideoData, index: number) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-medium text-gray-900 flex-1 mr-2">
-                          {index + 1}. {video.title}
-                        </h4>
-                        <div className="text-sm text-gray-500 flex items-center">
-                          {video.transcript ? '🎬' : '❌'}
-                          <span className="ml-2">{video.transcript ? '자막있음' : '자막없음'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="text-sm text-gray-600 mb-3 grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <span>조회수: {video.view_count?.toLocaleString() || '정보 없음'}</span>
-                        <span>좋아요: {video.like_count?.toLocaleString() || '정보 없음'}</span>
-                        <span>댓글: {video.comment_count?.toLocaleString() || '정보 없음'}</span>
-                        <span>발행일: {video.published_at?.substring(0, 10) || '정보 없음'}</span>
-                      </div>
-                      
-                      {/* 영상 설명 */}
-                      {video.description && (
-                        <div className="mb-3">
-                          <h5 className="text-sm font-medium text-gray-700 mb-1">영상 설명:</h5>
-                          <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded max-h-20 overflow-y-auto">
-                            {video.description.length > 200 
-                              ? video.description.substring(0, 200) + '...' 
-                              : video.description
-                            }
-                          </p>
-                        </div>
-                      )}
-                      
-                      {/* 자막 내용 */}
-                      {video.transcript && (
-                        <div>
-                          <h5 className="text-sm font-medium text-gray-700 mb-1">
-                            자막 내용 ({video.transcript.length}자):
-                          </h5>
-                          <div className="text-xs text-gray-600 bg-blue-50 p-3 rounded max-h-32 overflow-y-auto border-l-4 border-blue-200">
-                            <p className="whitespace-pre-line leading-relaxed">
-                              {video.transcript}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 키워드 분석 (기본 분석) */}
-              {analysis_result.keyword_analysis && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">🔤 기본 키워드 분석</h3>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {analysis_result.keyword_analysis.slice(0, 20).map((item) => (
-                        <div key={item.word} className="text-sm">
-                          <span className="font-medium">{item.word}</span>
-                          <span className="text-gray-500 ml-2">({item.count}회, {item.percentage}%)</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 참여도 분석 (기본 분석) */}
-              {analysis_result.engagement_analysis && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">📊 참여도 분석</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-800 mb-2">조회수 통계</h4>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        <div>평균 조회수: {analysis_result.engagement_analysis.avg_views?.toLocaleString()}</div>
-                        <div>최고 조회수: {analysis_result.engagement_analysis.most_viewed?.view_count?.toLocaleString()}</div>
-                        <div>최저 조회수: {analysis_result.engagement_analysis.least_viewed?.view_count?.toLocaleString()}</div>
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-800 mb-2">조회수 분포</h4>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        <div>100만+ 조회수: {analysis_result.engagement_analysis.view_distribution?.over_1m}개</div>
-                        <div>10만+ 조회수: {analysis_result.engagement_analysis.view_distribution?.over_100k}개</div>
-                        <div>1만+ 조회수: {analysis_result.engagement_analysis.view_distribution?.over_10k}개</div>
-                        <div>1만 미만: {analysis_result.engagement_analysis.view_distribution?.under_10k}개</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* 모달 내용 - 메모장 스타일 */}
+            <div className="p-4">
+              {/* AI 분석 결과 - 단순 텍스트 */}
+              {analysis_result.ai_analysis?.report_text && (
+                <SimpleAnalysisReport reportText={analysis_result.ai_analysis.report_text} />
               )}
 
               {/* 닫기 버튼 */}
-              <div className="flex justify-center">
+              <div className="flex justify-center mt-4">
                 <button
                   onClick={close_modal}
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg text-lg font-medium"
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 >
-                  분석 완료 ✓
+                  닫기
                 </button>
               </div>
             </div>
