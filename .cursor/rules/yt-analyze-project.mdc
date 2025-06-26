@@ -1,0 +1,93 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# YouTube Trend Analyzer - Project Rules
+
+## 📋 Project Overview
+This is a YouTube trend analysis service that helps YouTubers analyze popular channels' recent video trends. The service collects titles and scripts from the latest 10 videos of a channel through a YouTube URL input and provides AI-powered summary analysis.
+
+## 🎯 Project Purpose & Target Users
+- **Purpose**: Quick trend analysis for YouTube creators
+- **Target Users**: YouTube content planners, beginner to intermediate YouTubers, solo creators
+- **Core Value**: Fast competitive channel analysis
+
+## 🏗️ Architecture & Tech Stack
+- **Frontend**: Next.js (React-based)
+- **AI Analysis**: OpenAI GPT API
+- **Data Source**: YouTube Data API, ytdl-core if needed
+- **Storage**: Local cache (localStorage), no database
+- **Authentication**: None (no-login service)
+- **Deployment**: Vercel
+
+## 📁 Key Documentation Files
+- [masterplan.md](mdc:docs/masterplan.md) - Overall project goals and tech stack
+- [implementation-plan.md](mdc:docs/implementation-plan.md) - 6-stage development plan
+- [design-guidelines.md](mdc:docs/design-guidelines.md) - UI/UX style guide
+- [app-flow-pages-and-roles.md](mdc:docs/app-flow-pages-and-roles.md) - Page structure and user flows
+- [instructions.md](mdc:docs/instructions.md) - AI assistant usage guidelines
+
+## 🎨 Design Guidelines
+- **Style**: YouTube-like design with white background + red accents + card layout
+- **Responsive**: Desktop and mobile support
+- **Font**: Roboto, sans-serif
+- **Colors**: #FFFFFF, #FF0000, #333333
+- **Components**: URL input + button, loading spinner, analysis result cards
+
+## 📄 Page Structure
+1. **Home Page** (`/`): YouTube URL input and service description
+2. **Results Page** (`/result`): GPT summary results with keywords and title examples
+
+## 🔧 Development Standards
+- **Code Quality**: Senior full-stack developer standards, DRY principles, bug-free code
+- **Readability**: Prioritize readability while considering performance
+- **Comments**: Korean comments for all functions and major logic
+- **Error Handling**: Include error handling for all functions with user-friendly messages
+- **Naming**: Use underscore for word separation (e.g., retry_count), Boolean variables start with is/has/can
+
+## 🧩 Core Features Implementation
+1. YouTube URL input
+2. Channel ID extraction and latest 10 videos collection (YouTube API)
+3. Title + script collection for each video (auto-captions preferred)
+4. GPT API-powered summary analysis
+5. Text summary output on web
+
+## 🤖 AI Integration Guidelines
+- **GPT Role**: Extract recurring topics/patterns from video titles/scripts
+- **Analysis Focus**: YouTube video topic trends, keywords, tone, format characteristics
+- **Constraints**: Prompt length limit (4096 tokens), use descriptions for videos without captions
+
+## 📋 Development Stages
+1. ✅ Service introduction screen
+2. ✅ URL input and API calls
+3. ✅ AI summary analysis
+4. ✅ Results display UI
+5. ✅ Deployment and testing
+6. ✅ Future improvements (login, save results, channel recommendations)
+
+## 🔒 Security & Best Practices
+- Secure API key management
+- Loading states and exception handling
+- Input validation for YouTube URLs
+- Rate limiting considerations for APIs
+
+## 📱 User Experience Flow
+1. User visits homepage → enters YouTube URL
+2. Backend requests YouTube data → AI summarization
+3. Results page displays analysis
+
+## 🎯 Code Organization Principles
+- Feature-centered structure
+- Component separation and modularization
+- Style separation
+- Utility and hooks separation
+- Constants separation
+- Code should be 100% understandable by junior developers
+
+## ⚠️ Important Notes
+- No database required (localStorage only)
+- No authentication system
+- Focus on simplicity and speed
+- Mobile-responsive design is mandatory
+- All user-facing text should be in Korean

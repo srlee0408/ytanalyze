@@ -6,22 +6,34 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:subtitles": "ts-node scripts/test-subtitle-analysis.ts",
+    "test:subtitles:detailed": "ts-node scripts/test-subtitle-analysis.ts --detailed",
+    "test:subtitles:sample": "ts-node scripts/test-subtitle-analysis.ts --sample"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/marked": "^5.0.2",
+    "apify-client": "^2.12.5",
+    "axios": "^1.10.0",
+    "dotenv": "^16.4.7",
+    "marked": "^15.0.12",
+    "next": "15.3.4",
+    "openai": "^5.8.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.4"
+    "yt-transcript": "^0.0.2"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }
